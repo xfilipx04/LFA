@@ -67,5 +67,5 @@ generated_strings = grammar.generate_strings()
 print("Generated Strings:", generated_strings)
 
 fa = FiniteAutomaton(grammar)
-test_string = "a"
-print(f"Does the FA accept '{test_string}'?", test_string in generated_strings)
+test_string = "abwdvqwv"
+print(f"FA accepts '{test_string}'?", test_string in generated_strings)
