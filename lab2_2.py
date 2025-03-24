@@ -48,7 +48,7 @@ class FiniteAutomaton:
                 for next_state in next_states:
                     print(f"{state} : {symbol}{next_state}")
             if state in self.final_states:
-                print(f"{state} : ε")  # Epsilon transition for final states
+                print(f"{state} : ε")  
 
     def print_as_fa(self, state_map):
         print("Converted NFA to DFA:")
@@ -59,7 +59,7 @@ class FiniteAutomaton:
             for symbol, next_state in transitions.items():
                 print(f"{state_map[state]}--{symbol}-->{state_map[next_state]}")
 
-# Define NFA for Variant 22
+# Variant 22
 states = {"q0", "q1", "q2"}
 alphabet = {"a", "b"}
 transitions = {
