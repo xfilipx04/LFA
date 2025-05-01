@@ -7,13 +7,13 @@ def parse_regex(pattern):
     while i < len(pattern):
         char = pattern[i]
         if char == '(':
-            # Handle alternation groups (a|b|c)
+            #(a|b|c)
             end = pattern.find(')', i)
             options = pattern[i + 1:end].split('|')
             parsed.append(('group', options))
             i = end
         elif char == '^':
-            # Handle repetitions (X^+), (X^*), (X^n)
+           
             if pattern[i + 1] == '+':
                 parsed[-1] = ('repeat', parsed[-1], 1, 3)  # At least 1, max 3
                 i += 1
@@ -28,13 +28,12 @@ def parse_regex(pattern):
                 parsed[-1] = ('repeat', parsed[-1], count, count)
                 i = end - 1
         elif char == '[':
-            # Handle alternation groups [abc]
+        
             end = pattern.find(']', i)
             options = list(pattern[i + 1:end])
             parsed.append(('group', options))
             i = end
         elif char == '{':
-            # Handle explicit repetitions {min,max}
             end = pattern.find('}', i)
             min_max = pattern[i + 1:end].split(',')
             min_count = int(min_max[0])
@@ -42,10 +41,10 @@ def parse_regex(pattern):
             parsed[-1] = ('repeat', parsed[-1], min_count, max_count)
             i = end
         elif char == '?':
-            # Handle optional quantifier (X?)
-            parsed[-1] = ('repeat', parsed[-1], 0, 1)  # Zero or one occurrence
+            # (X?)
+            parsed[-1] = ('repeat', parsed[-1], 0, 1)  # 0 or 1
         else:
-            # Handle regular characters
+            
             parsed.append(('char', char))
         i += 1
     return parsed
