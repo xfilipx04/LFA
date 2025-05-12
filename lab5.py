@@ -1,5 +1,4 @@
 from collections import defaultdict, deque
-import copy
 
 class CFGtoCNFConverter:
     def __init__(self, variables, terminals, productions, start_symbol):
@@ -13,11 +12,24 @@ class CFGtoCNFConverter:
 
     def _get_new_variable(self):
         while True:
-            new_var = f"X{self.new_symbol_index}"
+            new_var = f"X_{self.new_symbol_index}"
             self.new_symbol_index += 1
             if new_var not in self.variables:
                 self.variables.add(new_var)
                 return new_var
+
+    def print_grammar_step(self, title):
+        print(f"\n=== {title} ===")
+        print("G = (VN, VT, P, S)")
+        print(f"VN = {self.variables}")
+        print(f"VT = {self.terminals}")
+        print(f"S = {self.start_symbol}")
+        print("P = {")
+        for A in sorted(self.productions):
+            for rule in self.productions[A]:
+                rhs = ' '.join(rule)
+                print(f"  {A} -> {rhs}")
+        print("}")
 
     def remove_epsilon_productions(self):
         nullable = set()
@@ -44,7 +56,7 @@ class CFGtoCNFConverter:
                     for s in subsets:
                         if symbol in nullable:
                             new_subsets.append(s + [symbol])
-                            new_subsets.append(s)  # skip nullable
+                            new_subsets.append(s)
                         else:
                             new_subsets.append(s + [symbol])
                     subsets = new_subsets
@@ -101,7 +113,6 @@ class CFGtoCNFConverter:
         self.variables = accessible
 
     def convert_to_cnf(self):
-        # Step 1: Replace terminals in long rules
         terminal_map = {}
         for A in list(self.productions):
             new_rules = []
@@ -119,7 +130,6 @@ class CFGtoCNFConverter:
                 new_rules.append(new_rule)
             self.productions[A] = new_rules
 
-        # Step 2: Convert long rules to binary rules
         updated = defaultdict(list)
         for A in self.productions:
             for rule in self.productions[A]:
@@ -131,17 +141,7 @@ class CFGtoCNFConverter:
                 updated[A].append(rule)
         self.productions = updated
 
-    def get_grammar(self):
-        return self.variables, self.terminals, self.productions, self.start_symbol
-
-    def print_grammar(self):
-        print("Productions in CNF:")
-        for A in sorted(self.productions):
-            for rule in self.productions[A]:
-                print(f"{A} → {' '.join(rule)}")
-
-
-# Input grammar (from your description)
+# Sample CFG
 VN = {'S', 'A', 'B', 'C', 'E'}
 VT = {'a', 'b'}
 P = [
@@ -158,10 +158,22 @@ P = [
 ]
 S = 'S'
 
+print("VARIANT 22 ")
+
 converter = CFGtoCNFConverter(VN, VT, P, S)
+converter.print_grammar_step("Original Grammar")
+
 converter.remove_epsilon_productions()
+converter.print_grammar_step("Step 1: Eliminate ε productions")
+
 converter.remove_unit_productions()
+converter.print_grammar_step("Step 2: Eliminate renaming")
+
 converter.remove_non_productive_symbols()
+converter.print_grammar_step("Step 3: Eliminate nonproductive symbols")
+
 converter.remove_inaccessible_symbols()
+converter.print_grammar_step("Step 4: Eliminate inaccessible symbols")
+
 converter.convert_to_cnf()
-converter.print_grammar()
+converter.print_grammar_step("Step 5: Convert to CNF")
